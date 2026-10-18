@@ -3,23 +3,28 @@ package com.trapplacer.build;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.trapplacer.trap.TrapType;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.phys.Vec3;
 
 /** Places one trap a slice at a time, bottom layer first, then switches its redstone on. */
 public final class BuildJob {
@@ -28,18 +33,20 @@ public final class BuildJob {
 
 	private final ServerLevel level;
 	private final TrapType trap;
+	private final Placement placement;
 	private final UUID owner;
 	private final List<Step> steps;
-	private final Map<BlockPos, List<ItemStack>> contents;
+	private final UndoHistory.Entry undoEntry;
 	private final int perTick;
 	private int next;
 
-	private BuildJob(ServerLevel level, TrapType trap, UUID owner, List<Step> steps, Map<BlockPos, List<ItemStack>> contents, int durationTicks) {
+	private BuildJob(ServerLevel level, TrapType trap, Placement placement, UUID owner, List<Step> steps, UndoHistory.Entry undoEntry, int durationTicks) {
 		this.level = level;
 		this.trap = trap;
+		this.placement = placement;
 		this.owner = owner;
 		this.steps = steps;
-		this.contents = contents;
+		this.undoEntry = undoEntry;
 		this.perTick = Math.max(1, (int)Math.ceil(steps.size() / (double)Math.max(1, durationTicks)));
 	}
 
@@ -55,16 +62,14 @@ public final class BuildJob {
 		// Stable sort keeps the blueprint's own order inside each layer.
 		steps.sort(Comparator.comparingInt(Step::localY));
 
-		Map<BlockPos, List<ItemStack>> contents = new java.util.LinkedHashMap<>();
-		blueprint.contents().forEach((local, stacks) -> contents.put(placement.toWorld(local), stacks));
-
 		List<UndoHistory.Snapshot> snapshot = new ArrayList<>(steps.size());
 		for (Step step : steps) {
 			snapshot.add(new UndoHistory.Snapshot(step.pos(), level.getBlockState(step.pos())));
 		}
-		undo.push(owner, new UndoHistory.Entry(level.dimension(), trap, snapshot));
+		UndoHistory.Entry entry = new UndoHistory.Entry(level.dimension(), trap, snapshot, new ArrayList<>());
+		undo.push(owner, entry);
 
-		return new BuildJob(level, trap, owner, steps, contents, durationTicks);
+		return new BuildJob(level, trap, placement, owner, steps, entry, durationTicks);
 	}
 
 	public UUID owner() {
@@ -100,12 +105,17 @@ public final class BuildJob {
 	}
 
 	private void finish() {
-		List<BlockPos> positions = new ArrayList<>(this.steps.size());
-		for (Step step : this.steps) {
-			positions.add(step.pos());
+		Blueprint blueprint = this.trap.blueprint();
+		if (!blueprint.exact()) {
+			List<BlockPos> positions = new ArrayList<>(this.steps.size());
+			for (Step step : this.steps) {
+				positions.add(step.pos());
+			}
+			BlockSettler.settle(this.level, positions);
 		}
-		BlockSettler.settle(this.level, positions);
-		fillContainers(this.level, this.contents);
+		this.fillContainers(blueprint);
+		this.loadBlockEntityData(blueprint);
+		this.spawnEntities(blueprint);
 
 		BlockPos center = this.steps.get(this.steps.size() - 1).pos();
 		this.level.playSound(null, center, SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 1.0F, 0.8F);
@@ -115,9 +125,9 @@ public final class BuildJob {
 		}
 	}
 
-	static void fillContainers(ServerLevel level, Map<BlockPos, List<ItemStack>> contents) {
-		contents.forEach((pos, stacks) -> {
-			BlockEntity blockEntity = level.getBlockEntity(pos);
+	private void fillContainers(Blueprint blueprint) {
+		blueprint.contents().forEach((local, stacks) -> {
+			BlockEntity blockEntity = this.level.getBlockEntity(this.placement.toWorld(local));
 			if (blockEntity instanceof Container container) {
 				container.clearContent();
 				for (int slot = 0; slot < stacks.size() && slot < container.getContainerSize(); slot++) {
@@ -126,5 +136,35 @@ public final class BuildJob {
 				blockEntity.setChanged();
 			}
 		});
+	}
+
+	private void loadBlockEntityData(Blueprint blueprint) {
+		blueprint.blockEntityData().forEach((local, tag) -> {
+			BlockEntity blockEntity = this.level.getBlockEntity(this.placement.toWorld(local));
+			if (blockEntity != null) {
+				blockEntity.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, this.level.registryAccess(), tag));
+				blockEntity.setChanged();
+			}
+		});
+	}
+
+	private void spawnEntities(Blueprint blueprint) {
+		Rotation rotation = this.placement.rotation();
+		for (Blueprint.EntitySpec spec : blueprint.entities()) {
+			Vec3 pos = this.placement.toWorld(spec.pos());
+			CompoundTag tag = spec.nbt().copy();
+			tag.remove("UUID");
+			EntityType.create(TagValueInput.create(ProblemReporter.DISCARDING, this.level.registryAccess(), tag), this.level, EntitySpawnReason.STRUCTURE)
+				.ifPresent(entity -> {
+					// Same as vanilla structure placement: turn the entity with the structure.
+					float yaw = entity.rotate(rotation);
+					entity.snapTo(pos.x, pos.y, pos.z, yaw, entity.getXRot());
+					entity.setYBodyRot(yaw);
+					entity.setYHeadRot(yaw);
+					if (this.level.addFreshEntity(entity)) {
+						this.undoEntry.entities().add(entity.getUUID());
+					}
+				});
+		}
 	}
 }

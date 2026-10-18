@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -42,6 +45,24 @@ public final class MaterialCost {
 				cost.merge(stack.getItem(), stack.getCount(), Integer::sum);
 			}
 		}
+		// Imported schematics: what's saved inside containers, and entities that are items
+		// (arrows, boats, minecarts...) are paid for too.
+		for (CompoundTag blockEntity : blueprint.blockEntityData().values()) {
+			ListTag items = blockEntity.getListOrEmpty("Items");
+			for (int i = 0; i < items.size(); i++) {
+				CompoundTag item = items.getCompoundOrEmpty(i);
+				Item type = itemById(item.getStringOr("id", ""));
+				if (type != Items.AIR) {
+					cost.merge(type, item.getIntOr("count", 1), Integer::sum);
+				}
+			}
+		}
+		for (Blueprint.EntitySpec entity : blueprint.entities()) {
+			Item type = itemById(entity.nbt().getStringOr("id", ""));
+			if (type != Items.AIR) {
+				cost.merge(type, 1, Integer::sum);
+			}
+		}
 
 		Map<Item, Integer> sorted = new LinkedHashMap<>();
 		cost.entrySet().stream()
@@ -73,6 +94,11 @@ public final class MaterialCost {
 			return Items.AMETHYST_SHARD;
 		}
 		return state.getBlock().asItem();
+	}
+
+	private static Item itemById(String id) {
+		Identifier identifier = Identifier.tryParse(id);
+		return identifier == null ? Items.AIR : BuiltInRegistries.ITEM.getValue(identifier);
 	}
 
 	/** What the player is short of, or an empty map if they can afford it. */

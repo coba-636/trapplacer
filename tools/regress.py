@@ -128,5 +128,18 @@ time.sleep(5.5)
 check('arrow_railgun one-shots target at 20 blocks', not alive('rg'))
 check('arrow_railgun destroyed no blocks', ok(f"execute if block {s.at(0, 15, 0)} iron_block") and ok(f"execute if block {s.at(0, 2, 1)} iron_trapdoor"))
 
+# Imported schematics: pasted exactly, with their saved contents and entities.
+print(r.cmd(f"trap place duck_railgun -60 {GROUND} -20 north"))
+time.sleep(3)
+print(r.cmd(f"trap place orbital_arrow_cannon 60 {GROUND} -20 north"))
+time.sleep(4)
+check('duck_railgun wind charges loaded', 'count: 60' in r.cmd("data get block -68 44 -22 Items"))
+check('duck_railgun fire button in place', ok("execute if block -65 47 -23 stone_button[face=floor]"))
+out = r.cmd("execute if entity @e[type=arrow,x=58.5,y=85.5,z=-32.5,distance=..1.5]")
+check('orbital_arrow_cannon has its 194 arrows (' + out.strip() + ')', 'Count: 194' in out)
+time.sleep(5)
+out = r.cmd("execute if entity @e[type=arrow,x=58.5,y=85.5,z=-32.5,distance=..1.5]")
+check('orbital_arrow_cannon arrows stay in their stasis', 'Count: 194' in out)
+
 print()
 print(f"{sum(1 for _, c in results if c)}/{len(results)} checks passed")

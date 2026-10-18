@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ComparatorMode;
 import net.minecraft.world.level.block.state.properties.DripstoneThickness;
 import net.minecraft.world.level.block.state.properties.PistonType;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Small DSL for writing trap blueprints in the local frame described in {@link Placement}:
@@ -40,9 +42,31 @@ public final class BlueprintBuilder {
 
 	private final Map<BlockPos, BlockSpec> blocks = new LinkedHashMap<>();
 	private final Map<BlockPos, List<ItemStack>> contents = new LinkedHashMap<>();
+	private final Map<BlockPos, CompoundTag> blockEntityData = new LinkedHashMap<>();
+	private final List<Blueprint.EntitySpec> entities = new ArrayList<>();
+	private boolean exact;
 
 	public Blueprint build() {
-		return new Blueprint(new LinkedHashMap<>(this.blocks), new LinkedHashMap<>(this.contents));
+		return new Blueprint(new LinkedHashMap<>(this.blocks), new LinkedHashMap<>(this.contents),
+			new LinkedHashMap<>(this.blockEntityData), this.entities, this.exact);
+	}
+
+	/** Place exactly as written, without re-settling the redstone afterwards (for imported schematics). */
+	public BlueprintBuilder exact() {
+		this.exact = true;
+		return this;
+	}
+
+	/** Saved block entity data for the block at this position. */
+	public BlueprintBuilder blockEntityData(int x, int y, int z, CompoundTag tag) {
+		this.blockEntityData.put(new BlockPos(x, y, z), tag.copy());
+		return this;
+	}
+
+	/** An entity at a local position (continuous coordinates: block (x, y, z) spans x..x+1 etc.). */
+	public BlueprintBuilder entity(Vec3 pos, CompoundTag tag) {
+		this.entities.add(new Blueprint.EntitySpec(pos, tag.copy()));
+		return this;
 	}
 
 	/** Offset of a canonical direction in local coordinates. */

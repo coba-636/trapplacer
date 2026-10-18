@@ -7,6 +7,8 @@ up: hidden pistons, observers, buried pits and loaded dispensers.
 The traps are in the style of **JudeLow**'s SMP traps (innocent-looking bait with hidden
 redstone underneath), plus a **one-shot arrow railgun** based on **ProfessorTNT**'s
 [How to build ONE SHOT ARROW RAILGUNS in Minecraft](https://www.youtube.com/watch?v=4sTQgv2uCBo).
+It also includes two community schematics: FireBall11901's orbital arrow cannon and Duckism7's
+instant railgun.
 
 ## Install
 
@@ -46,6 +48,17 @@ the traps blend in.
 | **Fake Diamond Mine** | A rocky outcrop with a mine tunnel and a diamond at the end | Mining the diamond ore | A piston and slime block slam the tunnel shut behind the miner, and the ceiling pours lava. |
 | **Powder Snow Pit** | A patch of snow | Walking on it | It's powder snow over a 13-block drop onto stalagmites. Leather boots let you walk across. |
 | **One-Shot Arrow Railgun** | A glass tower with a barrel | Pressing the button on the post at the back | About 4 seconds later, 27 TNT launch one arrow at ~20 blocks per tick. That's about 40 damage, enough to one-shot a player in full diamond. It comes loaded with 4 shots; refill the dispensers to reload. |
+| **Orbital Arrow Cannon** | FireBall11901's Donut SMP orbital arrow cannon (14×49×24) | Its own controls (note blocks and tripwire at the base) | Pasted exactly as saved, including its 194 arrows of ammo floating in their bubble-column stash. |
+| **DuckV1 Instant Railgun** | Duckism7's instant wind-charge railgun (19×7×9) | Its own controls (button on top, levers) | Pasted exactly as saved, with its 60 wind charges loaded. |
+
+### Community schematics
+
+The Orbital Arrow Cannon and the DuckV1 Instant Railgun are other people's builds, bundled as
+Litematica schematics and placed block-for-block: every block, the saved contents of
+dispensers and other containers, and saved entities like the cannon's arrows. They're placed
+the way they were built: the side that faced north in the schematic faces the way you look.
+Their bottom layer sits on top of the block you click. Operate and reload them the way their
+creators intended. `/trap undo` removes them, entities included.
 
 The pit traps re-arm themselves, but the carpet that fell in is gone. Put new carpet back on
 the piston heads to hide them again.
@@ -76,7 +89,7 @@ at something within about 25 blocks (a doorway or a path).
 | `/trap give [players]` | ops | Give a Trap Placer |
 | `/trap place <trap> <x y z> [north/east/south/west]` | ops | Build a trap without a wand or materials (also works from the server console) |
 
-Trap ids: `front_door`, `loot_chest`, `crafting_table`, `bed`, `diamond_mine`, `powder_snow`, `arrow_railgun`.
+Trap ids: `front_door`, `loot_chest`, `crafting_table`, `bed`, `diamond_mine`, `powder_snow`, `arrow_railgun`, `orbital_arrow_cannon`, `duck_railgun`.
 
 ## Survival
 
@@ -93,6 +106,8 @@ Blocks that copy the surrounding ground (the hidden fill and pit walls) are free
 | Fake Diamond Mine | ~520 stone-type blocks, 3 lava buckets, 3 dispensers, 1 diamond, 1 piston, 1 slime block… |
 | Powder Snow Pit | 9 powder snow buckets, 9 pointed dripstone, 9 dripstone blocks |
 | One-Shot Arrow Railgun | 251 glass, 108 TNT (4 shots), 88 redstone, 28 dispensers, 16 iron blocks, 15 repeaters, 16 arrows… |
+| Orbital Arrow Cannon | 833 white stained glass, 240 white concrete, 235 redstone, 194 arrows, 160 glass, 97 TNT, 58 repeaters, 55 activator rails, 44 observers… |
+| DuckV1 Instant Railgun | 60 wind charges, 41 crafting tables, 38 redstone, 23 stone, 6 sticky pistons, 5 dispensers… |
 
 ## Config
 
@@ -118,5 +133,8 @@ server, sets each one off and checks that it worked (see `tools/README.md`).
 ## Credits
 
 Trap ideas inspired by JudeLow's trap videos. The railgun concept comes from ProfessorTNT's
-arrow railgun video. The builds in this mod are original designs, and this project isn't
-affiliated with either creator.
+arrow railgun video. Apart from the two community schematics, the builds in this mod are
+original designs. This project isn't affiliated with either creator.
+
+The Orbital Arrow Cannon (Donut SMP version) schematic is by **FireBall11901**, and the DuckV1
+Instant Railgun schematic is by **Duckism7**.

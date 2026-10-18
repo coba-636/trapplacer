@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +29,8 @@ public final class UndoHistory {
 	public record Snapshot(BlockPos pos, BlockState previous) {
 	}
 
-	public record Entry(ResourceKey<Level> dimension, TrapType trap, List<Snapshot> snapshot) {
+	/** {@code entities} collects the ids of entities the trap spawned, so undo can remove them too. */
+	public record Entry(ResourceKey<Level> dimension, TrapType trap, List<Snapshot> snapshot, List<UUID> entities) {
 	}
 
 	private final Map<UUID, Deque<Entry>> history = new HashMap<>();
@@ -52,6 +54,13 @@ public final class UndoHistory {
 		ServerLevel level = server.getLevel(entry.dimension());
 		if (level == null) {
 			return entry;
+		}
+
+		for (UUID id : entry.entities()) {
+			Entity entity = level.getEntity(id);
+			if (entity != null) {
+				entity.discard();
+			}
 		}
 
 		List<BlockPos> positions = new ArrayList<>(entry.snapshot().size());

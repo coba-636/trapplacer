@@ -4,12 +4,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
 
 /**
  * Debug aid for tuning the railgun: with {@code -Dtrapplacer.debugArrows=true}
- * every arrow's position and motion, and every TNT about to explode, is logged each tick.
+ * every arrow's position and motion, other fast projectiles, and every TNT about to
+ * explode are logged each tick.
  */
 final class ArrowTracker {
 	static final boolean ENABLED = Boolean.getBoolean("trapplacer.debugArrows");
@@ -26,6 +28,9 @@ final class ArrowTracker {
 						TrapPlacer.LOGGER.info("[arrow] tick={} pos={} speed={} motion={}",
 							server.getTickCount(), format(arrow.position()), String.format("%.3f", motion.length()), format(motion));
 					}
+				} else if (entity instanceof Projectile projectile && projectile.getDeltaMovement().length() > 0.5) {
+					TrapPlacer.LOGGER.info("[projectile] tick={} type={} pos={} motion={}", server.getTickCount(),
+						projectile.getType().toShortString(), format(projectile.position()), format(projectile.getDeltaMovement()));
 				} else if (entity instanceof PrimedTnt tnt && tnt.getFuse() <= 2) {
 					TrapPlacer.LOGGER.info("[tnt] tick={} fuse={} pos={}", server.getTickCount(), tnt.getFuse(), format(tnt.position()));
 				}
