@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "equipment",
+	"pattern": [
+		" T ",
+		"PRP",
+		" S "
+	],
+	"key": {
+		"T": "minecraft:tnt",
+		"P": "minecraft:piston",
+		"R": "minecraft:redstone_block",
+		"S": "minecraft:stick"
+	},
+	"result": {
+		"id": "trapplacer:trap_placer",
+		"count": 1
+	}
+}

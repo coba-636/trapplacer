@@ -1,0 +1,6 @@
+{
+	"model": {
+		"type": "minecraft:model",
+		"model": "trapplacer:item/trap_placer"
+	}
+}

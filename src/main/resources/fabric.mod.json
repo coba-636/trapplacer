@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "trapplacer",
+	"version": "${version}",
+	"name": "Trap Placer",
+	"description": "Place fully built, working JudeLow-style traps and a ProfessorTNT-style one-shot arrow railgun in seconds.",
+	"authors": [
+		"rez-234"
+	],
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.trapplacer.TrapPlacer"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"icon": "assets/trapplacer/icon.png",
+	"contact": {
+		"sources": "https://github.com/rez-234/trapplacer"
+	}
+}
