@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -32,7 +33,7 @@ public final class MaterialCost {
 	public static Map<Item, Integer> of(Blueprint blueprint) {
 		Map<Item, Integer> cost = new LinkedHashMap<>();
 		for (BlockSpec spec : blueprint.blocks().values()) {
-			if (spec.isCamo()) {
+			if (spec.free()) {
 				continue;
 			}
 			Item item = itemFor(spec.state());
@@ -87,8 +88,29 @@ public final class MaterialCost {
 			return Items.AIR;
 		}
 		// Some blocks can't be picked up without Silk Touch, so charge what they drop instead.
-		if (state.is(Blocks.DIAMOND_ORE)) {
+		if (state.is(BlockTags.DIAMOND_ORES)) {
 			return Items.DIAMOND;
+		}
+		if (state.is(BlockTags.COAL_ORES)) {
+			return Items.COAL;
+		}
+		if (state.is(BlockTags.IRON_ORES)) {
+			return Items.RAW_IRON;
+		}
+		if (state.is(BlockTags.COPPER_ORES)) {
+			return Items.RAW_COPPER;
+		}
+		if (state.is(BlockTags.GOLD_ORES)) {
+			return Items.RAW_GOLD;
+		}
+		if (state.is(BlockTags.REDSTONE_ORES)) {
+			return Items.REDSTONE;
+		}
+		if (state.is(BlockTags.LAPIS_ORES)) {
+			return Items.LAPIS_LAZULI;
+		}
+		if (state.is(BlockTags.EMERALD_ORES)) {
+			return Items.EMERALD;
 		}
 		if (state.is(Blocks.MEDIUM_AMETHYST_BUD)) {
 			return Items.AMETHYST_SHARD;

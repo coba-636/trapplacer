@@ -7,8 +7,8 @@ up: hidden pistons, observers, buried pits and loaded dispensers.
 The traps are in the style of **JudeLow**'s SMP traps (innocent-looking bait with hidden
 redstone underneath), plus a **one-shot arrow railgun** based on **ProfessorTNT**'s
 [How to build ONE SHOT ARROW RAILGUNS in Minecraft](https://www.youtube.com/watch?v=4sTQgv2uCBo).
-It also includes three community schematics: FireBall11901's orbital arrow cannon, Duckism7's
-instant railgun and antoberak's pop-up arrow cannon.
+It also includes four community schematics: FireBall11901's orbital arrow cannon, Duckism7's
+instant railgun, antoberak's pop-up arrow cannon and zm3s's 5x1 flat ground trap.
 
 ## Install
 
@@ -52,16 +52,19 @@ the traps blend in.
 | **Orbital Arrow Cannon** | FireBall11901's Donut SMP orbital arrow cannon (14×49×24) | Its own controls (note blocks and tripwire at the base) | Pasted exactly as saved, including its 194 arrows of ammo floating in their bubble-column stash. |
 | **DuckV1 Instant Railgun** | Duckism7's instant wind-charge railgun (19×7×9) | Its own controls (button on top, levers) | Pasted exactly as saved, with its 60 wind charges loaded. |
 | **Pop-Up Arrow Cannon** | antoberak's pop-up arrow cannon/railgun (7×10×10) | The button on its right side | Pasted exactly as saved, with its dispensers loaded (carved pumpkins, shears, lava, wind-charged splash potions). The button runs its pop-up piston sequence, then it resets. No arrows were saved in the schematic. |
+| **5x1 Flat Ground Trap** | zm3s's flat ground trap: just grass and a pressure plate on top, dug 21 blocks into the ground | Stepping on the pressure plate | Pasted exactly as saved. The plate sinks the 5×1 strip of ground 4 blocks in front of it by one block, above a shaft down to stalagmites and loot chests, and the row next to the strip jumps up. Everything resets when the plate is released. In testing, mobs on the strip didn't fall in. |
 
 ### Community schematics
 
-The Orbital Arrow Cannon, the DuckV1 Instant Railgun and the Pop-Up Arrow Cannon are other
-people's builds, bundled as Litematica schematics and placed block-for-block: every block, the
+The Orbital Arrow Cannon, the DuckV1 Instant Railgun, the Pop-Up Arrow Cannon and the 5x1 Flat
+Ground Trap are other people's builds, bundled as Litematica schematics and placed block-for-block: every block, the
 saved contents of dispensers and other containers, and saved entities like the cannon's arrows.
 Redstone that was running when the schematic was saved (the DuckV1's and the pop-up cannon's
 clocks) starts running again as soon as it's placed, like a Litematica paste.
 They're placed the way they were built: the side that faced north in the schematic faces the
-way you look. Their bottom layer sits on top of the block you click. Operate and reload them
+way you look. The cannons' bottom layer sits on top of the block you click. The flat ground
+trap was saved together with the ground around it, so it's dug in instead: its grass layer
+replaces the block you click and the rest is buried below. Operate and reload them
 the way their creators intended. `/trap undo` removes them, entities included.
 
 The pit traps re-arm themselves, but the carpet that fell in is gone. Put new carpet back on
@@ -93,13 +96,14 @@ at something within about 25 blocks (a doorway or a path).
 | `/trap give [players]` | ops | Give a Trap Placer |
 | `/trap place <trap> <x y z> [north/east/south/west]` | ops | Build a trap without a wand or materials (also works from the server console) |
 
-Trap ids: `front_door`, `loot_chest`, `crafting_table`, `bed`, `diamond_mine`, `powder_snow`, `arrow_railgun`, `orbital_arrow_cannon`, `duck_railgun`, `popup_arrow_cannon`.
+Trap ids: `front_door`, `loot_chest`, `crafting_table`, `bed`, `diamond_mine`, `powder_snow`, `arrow_railgun`, `orbital_arrow_cannon`, `duck_railgun`, `popup_arrow_cannon`, `flat_ground`.
 
 ## Survival
 
 In creative, traps are free. In survival you pay for the blocks and the dispenser contents.
 The trap is only built if you have everything, and `/trap info <trap>` lists the cost.
-Blocks that copy the surrounding ground (the hidden fill and pit walls) are free.
+Blocks that copy the surrounding ground (the hidden fill and pit walls) are free, and so is the
+natural stone and dirt the flat ground trap is dug into. Ore blocks cost what they drop.
 
 | Trap | Main costs |
 |---|---|
@@ -113,6 +117,7 @@ Blocks that copy the surrounding ground (the hidden fill and pit walls) are free
 | Orbital Arrow Cannon | 833 white stained glass, 240 white concrete, 235 redstone, 194 arrows, 160 glass, 97 TNT, 58 repeaters, 55 activator rails, 44 observers… |
 | DuckV1 Instant Railgun | 60 wind charges, 41 crafting tables, 38 redstone, 23 stone, 6 sticky pistons, 5 dispensers… |
 | Pop-Up Arrow Cannon | 576 carved pumpkins, 16 stone, 9 sticky pistons, 8 redstone, 7 observers, 7 splash potions, 5 dispensers, 1 lava bucket, 1 shears… |
+| 5x1 Flat Ground Trap | 60 oak signs, 29 redstone, 12 sticky pistons, 9 raw copper, 8 coal, 8 sandstone, 6 observers, 6 raw iron… |
 
 ## Config
 
@@ -138,9 +143,9 @@ server, sets each one off and checks that it worked (see `tools/README.md`).
 ## Credits
 
 Trap ideas inspired by JudeLow's trap videos. The railgun concept comes from ProfessorTNT's
-arrow railgun video. Apart from the three community schematics, the builds in this mod are
+arrow railgun video. Apart from the four community schematics, the builds in this mod are
 original designs. This project isn't affiliated with either creator.
 
 The Orbital Arrow Cannon (Donut SMP version) schematic is by **FireBall11901**, the DuckV1
-Instant Railgun schematic is by **Duckism7**, and the Pop-Up Arrow Cannon/Railgun 5 schematic is
-by **antoberak**.
+Instant Railgun schematic is by **Duckism7**, the Pop-Up Arrow Cannon/Railgun 5 schematic is by
+**antoberak**, and the 5x1 Flat Ground Trap schematic is by **zm3s**.

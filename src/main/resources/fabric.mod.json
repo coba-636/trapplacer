@@ -3,7 +3,7 @@
 	"id": "trapplacer",
 	"version": "${version}",
 	"name": "Trap Placer",
-	"description": "Place fully built, working JudeLow-style traps, a ProfessorTNT-style one-shot arrow railgun and three community cannon schematics in seconds.",
+	"description": "Place fully built, working JudeLow-style traps, a ProfessorTNT-style one-shot arrow railgun and four community trap and cannon schematics in seconds.",
 	"authors": [
 		"rez-234"
 	],

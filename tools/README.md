@@ -2,7 +2,7 @@
 
 `regress.py` places every trap on a dev server, sets each one off with mobs and
 checks the result, then checks that the bundled schematics paste with their
-contents and entities (23 checks).
+contents and entities (27 checks).
 
 1. Copy `server.properties` into `run/` (it makes a tall superflat world with the
    grass at y=40, turns on RCON with password `test`, and stops the server from

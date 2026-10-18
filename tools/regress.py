@@ -153,5 +153,18 @@ for _ in range(12):
     time.sleep(0.15)
 check('popup_arrow_cannon clock is running', states == {True, False})
 
+# Dug into the ground: its grass layer replaces the clicked block, the rest is buried.
+print(r.cmd(f"trap place flat_ground -80 {GROUND} 80 north"))
+time.sleep(4)
+check('flat_ground is flush with the ground', ok(f"execute if block -80 {GROUND} 80 grass_block") and ok(f"execute if block -80 {GROUND + 1} 77 oak_pressure_plate"))
+check('flat_ground shaft is buried under the strip', ok(f"execute if block -80 {GROUND - 4} 73 oak_sign"))
+victim('fg', f"-79.5 {GROUND + 1} 77.5")
+time.sleep(1.5)
+check('flat_ground plate sinks the strip', ok(f"execute if block -79 {GROUND} 73 air"))
+# Step off rather than die: a dropped item would hold the wooden plate down.
+r.cmd(f"tp @e[tag=fg] -70.5 {GROUND + 1} 85.5")
+time.sleep(2.5)
+check('flat_ground resets when the plate is released', ok(f"execute if block -79 {GROUND} 73 dirt"))
+
 print()
 print(f"{sum(1 for _, c in results if c)}/{len(results)} checks passed")
