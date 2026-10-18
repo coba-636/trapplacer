@@ -7,8 +7,10 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.ticks.TickPriority;
 
 /**
  * A finished trap design in local coordinates (see {@link Placement}).
@@ -19,19 +21,25 @@ public final class Blueprint {
 	public record EntitySpec(Vec3 pos, CompoundTag nbt) {
 	}
 
+	/** A block update that was pending when a schematic was saved (a running clock, a repeater mid-delay...). */
+	public record TickSpec(BlockPos pos, Block block, int delay, TickPriority priority) {
+	}
+
 	private final Map<BlockPos, BlockSpec> blocks;
 	private final Map<BlockPos, List<ItemStack>> contents;
 	private final Map<BlockPos, CompoundTag> blockEntityData;
 	private final List<EntitySpec> entities;
+	private final List<TickSpec> ticks;
 	private final boolean exact;
 	private final BoundingBox bounds;
 
 	Blueprint(Map<BlockPos, BlockSpec> blocks, Map<BlockPos, List<ItemStack>> contents,
-			Map<BlockPos, CompoundTag> blockEntityData, List<EntitySpec> entities, boolean exact) {
+			Map<BlockPos, CompoundTag> blockEntityData, List<EntitySpec> entities, List<TickSpec> ticks, boolean exact) {
 		this.blocks = Collections.unmodifiableMap(blocks);
 		this.contents = Collections.unmodifiableMap(contents);
 		this.blockEntityData = Collections.unmodifiableMap(blockEntityData);
 		this.entities = List.copyOf(entities);
+		this.ticks = List.copyOf(ticks);
 		this.exact = exact;
 		this.bounds = BoundingBox.encapsulatingPositions(blocks.keySet())
 			.orElseThrow(() -> new IllegalStateException("Empty blueprint"));
@@ -54,6 +62,11 @@ public final class Blueprint {
 
 	public List<EntitySpec> entities() {
 		return this.entities;
+	}
+
+	/** Block ticks to schedule once the trap is built, so saved machines carry on as they were. */
+	public List<TickSpec> ticks() {
+		return this.ticks;
 	}
 
 	/**

@@ -116,6 +116,7 @@ public final class BuildJob {
 		this.fillContainers(blueprint);
 		this.loadBlockEntityData(blueprint);
 		this.spawnEntities(blueprint);
+		this.scheduleTicks(blueprint);
 
 		BlockPos center = this.steps.get(this.steps.size() - 1).pos();
 		this.level.playSound(null, center, SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 1.0F, 0.8F);
@@ -146,6 +147,15 @@ public final class BuildJob {
 				blockEntity.setChanged();
 			}
 		});
+	}
+
+	private void scheduleTicks(Blueprint blueprint) {
+		for (Blueprint.TickSpec tick : blueprint.ticks()) {
+			BlockPos pos = this.placement.toWorld(tick.pos());
+			if (this.level.getBlockState(pos).is(tick.block())) {
+				this.level.scheduleTick(pos, tick.block(), tick.delay(), tick.priority());
+			}
+		}
 	}
 
 	private void spawnEntities(Blueprint blueprint) {

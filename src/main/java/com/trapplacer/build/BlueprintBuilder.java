@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.ComparatorMode;
 import net.minecraft.world.level.block.state.properties.DripstoneThickness;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.ticks.TickPriority;
 
 /**
  * Small DSL for writing trap blueprints in the local frame described in {@link Placement}:
@@ -44,11 +45,12 @@ public final class BlueprintBuilder {
 	private final Map<BlockPos, List<ItemStack>> contents = new LinkedHashMap<>();
 	private final Map<BlockPos, CompoundTag> blockEntityData = new LinkedHashMap<>();
 	private final List<Blueprint.EntitySpec> entities = new ArrayList<>();
+	private final List<Blueprint.TickSpec> ticks = new ArrayList<>();
 	private boolean exact;
 
 	public Blueprint build() {
 		return new Blueprint(new LinkedHashMap<>(this.blocks), new LinkedHashMap<>(this.contents),
-			new LinkedHashMap<>(this.blockEntityData), this.entities, this.exact);
+			new LinkedHashMap<>(this.blockEntityData), this.entities, this.ticks, this.exact);
 	}
 
 	/** Place exactly as written, without re-settling the redstone afterwards (for imported schematics). */
@@ -66,6 +68,12 @@ public final class BlueprintBuilder {
 	/** An entity at a local position (continuous coordinates: block (x, y, z) spans x..x+1 etc.). */
 	public BlueprintBuilder entity(Vec3 pos, CompoundTag tag) {
 		this.entities.add(new Blueprint.EntitySpec(pos, tag.copy()));
+		return this;
+	}
+
+	/** A block tick to schedule {@code delay} ticks after the trap is built. */
+	public BlueprintBuilder scheduledTick(int x, int y, int z, Block block, int delay, TickPriority priority) {
+		this.ticks.add(new Blueprint.TickSpec(new BlockPos(x, y, z), block, delay, priority));
 		return this;
 	}
 

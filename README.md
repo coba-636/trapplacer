@@ -7,13 +7,14 @@ up: hidden pistons, observers, buried pits and loaded dispensers.
 The traps are in the style of **JudeLow**'s SMP traps (innocent-looking bait with hidden
 redstone underneath), plus a **one-shot arrow railgun** based on **ProfessorTNT**'s
 [How to build ONE SHOT ARROW RAILGUNS in Minecraft](https://www.youtube.com/watch?v=4sTQgv2uCBo).
-It also includes two community schematics: FireBall11901's orbital arrow cannon and Duckism7's
-instant railgun.
+It also includes three community schematics: FireBall11901's orbital arrow cannon, Duckism7's
+instant railgun and antoberak's pop-up arrow cannon.
 
 ## Install
 
 1. Install [Fabric Loader](https://fabricmc.net/use/) 0.19.5+ for Minecraft 1.21.11.
-2. Put [Fabric API](https://modrinth.com/mod/fabric-api) and `trapplacer-1.0.0.jar` in your `mods` folder.
+2. Put [Fabric API](https://modrinth.com/mod/fabric-api) and the `trapplacer-<version>.jar` from
+   [Releases](https://github.com/coba-636/trapplacer/releases) in your `mods` folder.
 
 On a server, both the server and every player need the mod.
 
@@ -50,15 +51,18 @@ the traps blend in.
 | **One-Shot Arrow Railgun** | A glass tower with a barrel | Pressing the button on the post at the back | About 4 seconds later, 27 TNT launch one arrow at ~20 blocks per tick. That's about 40 damage, enough to one-shot a player in full diamond. It comes loaded with 4 shots; refill the dispensers to reload. |
 | **Orbital Arrow Cannon** | FireBall11901's Donut SMP orbital arrow cannon (14×49×24) | Its own controls (note blocks and tripwire at the base) | Pasted exactly as saved, including its 194 arrows of ammo floating in their bubble-column stash. |
 | **DuckV1 Instant Railgun** | Duckism7's instant wind-charge railgun (19×7×9) | Its own controls (button on top, levers) | Pasted exactly as saved, with its 60 wind charges loaded. |
+| **Pop-Up Arrow Cannon** | antoberak's pop-up arrow cannon/railgun (7×10×10) | The button on its right side | Pasted exactly as saved, with its dispensers loaded (carved pumpkins, shears, lava, wind-charged splash potions). The button runs its pop-up piston sequence, then it resets. No arrows were saved in the schematic. |
 
 ### Community schematics
 
-The Orbital Arrow Cannon and the DuckV1 Instant Railgun are other people's builds, bundled as
-Litematica schematics and placed block-for-block: every block, the saved contents of
-dispensers and other containers, and saved entities like the cannon's arrows. They're placed
-the way they were built: the side that faced north in the schematic faces the way you look.
-Their bottom layer sits on top of the block you click. Operate and reload them the way their
-creators intended. `/trap undo` removes them, entities included.
+The Orbital Arrow Cannon, the DuckV1 Instant Railgun and the Pop-Up Arrow Cannon are other
+people's builds, bundled as Litematica schematics and placed block-for-block: every block, the
+saved contents of dispensers and other containers, and saved entities like the cannon's arrows.
+Redstone that was running when the schematic was saved (the DuckV1's and the pop-up cannon's
+clocks) starts running again as soon as it's placed, like a Litematica paste.
+They're placed the way they were built: the side that faced north in the schematic faces the
+way you look. Their bottom layer sits on top of the block you click. Operate and reload them
+the way their creators intended. `/trap undo` removes them, entities included.
 
 The pit traps re-arm themselves, but the carpet that fell in is gone. Put new carpet back on
 the piston heads to hide them again.
@@ -89,7 +93,7 @@ at something within about 25 blocks (a doorway or a path).
 | `/trap give [players]` | ops | Give a Trap Placer |
 | `/trap place <trap> <x y z> [north/east/south/west]` | ops | Build a trap without a wand or materials (also works from the server console) |
 
-Trap ids: `front_door`, `loot_chest`, `crafting_table`, `bed`, `diamond_mine`, `powder_snow`, `arrow_railgun`, `orbital_arrow_cannon`, `duck_railgun`.
+Trap ids: `front_door`, `loot_chest`, `crafting_table`, `bed`, `diamond_mine`, `powder_snow`, `arrow_railgun`, `orbital_arrow_cannon`, `duck_railgun`, `popup_arrow_cannon`.
 
 ## Survival
 
@@ -108,6 +112,7 @@ Blocks that copy the surrounding ground (the hidden fill and pit walls) are free
 | One-Shot Arrow Railgun | 251 glass, 108 TNT (4 shots), 88 redstone, 28 dispensers, 16 iron blocks, 15 repeaters, 16 arrows… |
 | Orbital Arrow Cannon | 833 white stained glass, 240 white concrete, 235 redstone, 194 arrows, 160 glass, 97 TNT, 58 repeaters, 55 activator rails, 44 observers… |
 | DuckV1 Instant Railgun | 60 wind charges, 41 crafting tables, 38 redstone, 23 stone, 6 sticky pistons, 5 dispensers… |
+| Pop-Up Arrow Cannon | 576 carved pumpkins, 16 stone, 9 sticky pistons, 8 redstone, 7 observers, 7 splash potions, 5 dispensers, 1 lava bucket, 1 shears… |
 
 ## Config
 
@@ -133,8 +138,9 @@ server, sets each one off and checks that it worked (see `tools/README.md`).
 ## Credits
 
 Trap ideas inspired by JudeLow's trap videos. The railgun concept comes from ProfessorTNT's
-arrow railgun video. Apart from the two community schematics, the builds in this mod are
+arrow railgun video. Apart from the three community schematics, the builds in this mod are
 original designs. This project isn't affiliated with either creator.
 
-The Orbital Arrow Cannon (Donut SMP version) schematic is by **FireBall11901**, and the DuckV1
-Instant Railgun schematic is by **Duckism7**.
+The Orbital Arrow Cannon (Donut SMP version) schematic is by **FireBall11901**, the DuckV1
+Instant Railgun schematic is by **Duckism7**, and the Pop-Up Arrow Cannon/Railgun 5 schematic is
+by **antoberak**.

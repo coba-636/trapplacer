@@ -17,23 +17,28 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.ticks.TickPriority;
 
 /**
  * Turns a Litematica schematic (.litematic) bundled with the mod into a {@link Blueprint}.
  *
  * <p>The schematic is turned so that its {@code forward} side (the way it fires)
  * points the way the player looks, then sits on the clicked ground block with its
- * back edge centred there. Blocks, block entity data (dispenser contents...) and
- * entities are all kept, and it's pasted exactly as saved.
+ * back edge centred there. Blocks, block entity data (dispenser contents...),
+ * entities and pending block ticks are all kept, and it's pasted exactly as saved.
  */
 public final class LitematicLoader {
 	private record Block(BlockPos pos, BlockState state) {
 	}
 
 	private record EntityData(Vec3 pos, CompoundTag nbt) {
+	}
+
+	private record TickData(BlockPos pos, net.minecraft.world.level.block.Block block, int delay, TickPriority priority) {
 	}
 
 	private LitematicLoader() {
@@ -61,9 +66,10 @@ public final class LitematicLoader {
 		List<Block> blocks = new ArrayList<>();
 		Map<BlockPos, CompoundTag> blockEntities = new LinkedHashMap<>();
 		List<EntityData> entities = new ArrayList<>();
+		List<TickData> ticks = new ArrayList<>();
 		CompoundTag regions = root.getCompoundOrEmpty("Regions");
 		for (String name : regions.keySet()) {
-			readRegion(regions.getCompoundOrEmpty(name), rotation, blocks, blockEntities, entities);
+			readRegion(regions.getCompoundOrEmpty(name), rotation, blocks, blockEntities, entities, ticks);
 		}
 
 		int minX = Integer.MAX_VALUE;
@@ -95,10 +101,15 @@ public final class LitematicLoader {
 			Vec3 p = entity.pos();
 			b.entity(new Vec3(p.x - cx, p.y - my + 1, (mz + 1) - p.z), entity.nbt());
 		}
+		for (TickData tick : ticks) {
+			BlockPos p = tick.pos();
+			b.scheduledTick(p.getX() - cx, p.getY() - my + 1, mz - p.getZ(), tick.block(), tick.delay(), tick.priority());
+		}
 		return b.build();
 	}
 
-	private static void readRegion(CompoundTag region, Rotation rotation, List<Block> blocks, Map<BlockPos, CompoundTag> blockEntities, List<EntityData> entities) {
+	private static void readRegion(CompoundTag region, Rotation rotation, List<Block> blocks, Map<BlockPos, CompoundTag> blockEntities,
+			List<EntityData> entities, List<TickData> ticks) {
 		CompoundTag position = region.getCompoundOrEmpty("Position");
 		CompoundTag size = region.getCompoundOrEmpty("Size");
 		int px = position.getIntOr("x", 0);
@@ -148,6 +159,19 @@ public final class LitematicLoader {
 			CompoundTag tag = tileEntities.getCompoundOrEmpty(i);
 			BlockPos pos = new BlockPos(minX + tag.getIntOr("x", 0), minY + tag.getIntOr("y", 0), minZ + tag.getIntOr("z", 0));
 			blockEntities.put(pos.rotate(rotation), tag);
+		}
+
+		// Updates that were due when the schematic was saved, e.g. a running observer clock.
+		ListTag tickList = region.getListOrEmpty("PendingBlockTicks");
+		for (int i = 0; i < tickList.size(); i++) {
+			CompoundTag tag = tickList.getCompoundOrEmpty(i);
+			Identifier id = Identifier.tryParse(tag.getStringOr("Block", ""));
+			if (id == null || !BuiltInRegistries.BLOCK.containsKey(id)) {
+				continue;
+			}
+			BlockPos pos = new BlockPos(minX + tag.getIntOr("x", 0), minY + tag.getIntOr("y", 0), minZ + tag.getIntOr("z", 0));
+			ticks.add(new TickData(pos.rotate(rotation), BuiltInRegistries.BLOCK.getValue(id),
+				Math.max(1, tag.getIntOr("Time", 1)), TickPriority.byValue(tag.getIntOr("Priority", 0))));
 		}
 
 		// Entity positions are relative to the region's Position, not its corner.

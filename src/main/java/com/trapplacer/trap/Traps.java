@@ -27,9 +27,12 @@ public final class Traps {
 		() -> LitematicLoader.load("/data/trapplacer/schematics/orbital_arrow_cannon.litematic", Direction.NORTH));
 	public static final TrapType DUCK_RAILGUN = new TrapType("duck_railgun",
 		() -> LitematicLoader.load("/data/trapplacer/schematics/duck_instant_railgun.litematic", Direction.NORTH));
+	public static final TrapType POPUP_ARROW_CANNON = new TrapType("popup_arrow_cannon",
+		() -> LitematicLoader.load("/data/trapplacer/schematics/popup_arrow_cannon.litematic", Direction.NORTH));
 
 	public static final List<TrapType> ALL = List.of(
-		FRONT_DOOR, LOOT_CHEST, CRAFTING_TABLE, BED, DIAMOND_MINE, POWDER_SNOW, ARROW_RAILGUN, ORBITAL_ARROW_CANNON, DUCK_RAILGUN);
+		FRONT_DOOR, LOOT_CHEST, CRAFTING_TABLE, BED, DIAMOND_MINE, POWDER_SNOW, ARROW_RAILGUN, ORBITAL_ARROW_CANNON, DUCK_RAILGUN,
+		POPUP_ARROW_CANNON);
 
 	private Traps() {
 	}

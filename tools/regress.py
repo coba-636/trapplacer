@@ -141,5 +141,17 @@ time.sleep(5)
 out = r.cmd("execute if entity @e[type=arrow,x=58.5,y=85.5,z=-32.5,distance=..1.5]")
 check('orbital_arrow_cannon arrows stay in their stasis', 'Count: 194' in out)
 
+print(r.cmd(f"trap place popup_arrow_cannon 0 {GROUND} 20 north"))
+time.sleep(3)
+out = r.cmd("data get block 1 46 19 Items")
+check('popup_arrow_cannon wind-charged potions loaded', out.count('minecraft:wind_charged') == 7)
+check('popup_arrow_cannon button in place', ok("execute if block 2 46 18 oak_button[face=wall,facing=east]"))
+# It was saved with its observer clock running, so the piston it drives keeps moving.
+states = set()
+for _ in range(12):
+    states.add(ok("execute if block 0 44 17 sticky_piston[extended=false]"))
+    time.sleep(0.15)
+check('popup_arrow_cannon clock is running', states == {True, False})
+
 print()
 print(f"{sum(1 for _, c in results if c)}/{len(results)} checks passed")
