@@ -1,0 +1,45 @@
+name: Release
+
+# Pushing a tag like v1.0.0 builds the mod and publishes the jar as a GitHub release.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: |
+          ./gradlew build --no-daemon
+          rm build/libs/*-sources.jar
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Trap Placer ${{ github.ref_name }}
+          files: build/libs/trapplacer-*.jar
+          body: |
+            Trap Placer for **Minecraft 1.21.11** (Fabric).
+
+            Place fully built, working traps in about two seconds: Front Door Drop, Loot Chest Trap,
+            Crafting Table Trap, Sweet Dreams Bed Trap, Fake Diamond Mine, Powder Snow Pit and a
+            One-Shot Arrow Railgun.
+
+            **Install:** put the jar below and [Fabric API](https://modrinth.com/mod/fabric-api) in your
+            `mods` folder (Fabric Loader 0.19.5+). Servers and players both need it.
+
+            See the [README](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/README.md) for how to use it.
