@@ -1,7 +1,9 @@
 name: Release
 
-# Pushing a tag like v1.0.0 builds the mod and publishes the jar as a GitHub release.
+# Builds the mod and publishes the jar as a GitHub release named after mod_version
+# in gradle.properties (e.g. v1.0.0). Run it from the Actions tab, or push a v* tag.
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v*'
@@ -27,10 +29,16 @@ jobs:
           ./gradlew build --no-daemon
           rm build/libs/*-sources.jar
 
+      - name: Read version
+        id: version
+        run: echo "tag=v$(grep '^mod_version=' gradle.properties | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          name: Trap Placer ${{ github.ref_name }}
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Trap Placer ${{ github.ref_type == 'tag' && github.ref_name || steps.version.outputs.tag }}
           files: build/libs/trapplacer-*.jar
           body: |
             Trap Placer for **Minecraft 1.21.11** (Fabric).
@@ -42,4 +50,4 @@ jobs:
             **Install:** put the jar below and [Fabric API](https://modrinth.com/mod/fabric-api) in your
             `mods` folder (Fabric Loader 0.19.5+). Servers and players both need it.
 
-            See the [README](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/README.md) for how to use it.
+            See the [README](https://github.com/${{ github.repository }}#readme) for how to use it.
